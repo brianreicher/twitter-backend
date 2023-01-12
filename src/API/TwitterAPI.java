@@ -2,7 +2,7 @@ package API;
 
 import java.util.*;
 
-public class twitterAPI {
+public class TwitterAPI {
 
 
     public void postTweet(Tweet t)
