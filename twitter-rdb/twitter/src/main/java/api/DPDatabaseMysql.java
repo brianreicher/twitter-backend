@@ -1,10 +1,10 @@
-package twitter.src.main.java.api;
+package api;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import twitter.src.main.java.database.DBUtils;
+import database.DBUtils;
 
 
 public class DPDatabaseMysql implements DPDatabaseAPI {
@@ -19,7 +19,7 @@ public class DPDatabaseMysql implements DPDatabaseAPI {
      * Register a patient - no recovery of newly created patient_id
      * @param p The patient
      */
-    public void registerPatientMethod1(Patient p)
+    public void registerPatientMethod1(Timeline p)
     {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String sql = "INSERT INTO patient (lastname,firstname,sex,dob) VALUES" +
@@ -48,7 +48,7 @@ public class DPDatabaseMysql implements DPDatabaseAPI {
      * @param p The Patient
      * @return patient_id
      */
-    public int registerPatientMethod2(Patient p)
+    public int registerPatientMethod2(Timeline p)
     {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String sql = "INSERT INTO patient (lastname,firstname,sex,dob) VALUES" +
@@ -83,7 +83,7 @@ public class DPDatabaseMysql implements DPDatabaseAPI {
      * @param p The patient
      * @return The newly created patient ID or -1 if patient already exists
      */
-    public int registerPatient(Patient p)
+    public int registerPatient(Timeline p)
     {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String sql = "INSERT INTO patient (lastname,firstname,sex,dob) VALUES" +
@@ -245,4 +245,46 @@ public class DPDatabaseMysql implements DPDatabaseAPI {
      * Close the connection when application finishes
      */
     public void closeConnection() { dbu.closeConnection(); }
+
+
+    @Override
+    public void postTweet(Tweet t) {
+        // TODO Auto-generated method stub
+        
+    }
+
+
+    @Override
+    public void postTweets(List<Tweet> twlist) {
+        // TODO Auto-generated method stub
+        
+    }
+
+
+    @Override
+    public List<Tweet> getTimeline(Integer userID) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
+    @Override
+    public List<Integer> getFollowers(Integer userID) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
+    @Override
+    public List<Integer> getFollowees(Integer userID) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
+    @Override
+    public List<Tweet> getTweets(Integer userID) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

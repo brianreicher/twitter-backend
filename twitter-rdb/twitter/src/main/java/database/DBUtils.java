@@ -1,4 +1,4 @@
-package twitter.src.main.java.database;
+package database;
 
 import java.sql.*;
 

@@ -1,8 +1,8 @@
-package twitter.src.main.java.api;
+package api;
 
 import java.util.Date;
 
-public class Patient {
+public class Timeline {
 
     private int patientID;
     private String firstName;
@@ -10,7 +10,7 @@ public class Patient {
     private char sex;
     private Date dob;
 
-    public Patient(String lastName, String firstName, char sex, Date dob) {
+    public Timeline(String lastName, String firstName, char sex, Date dob) {
         this.patientID = -1;
         this.firstName = firstName;
         this.lastName = lastName;

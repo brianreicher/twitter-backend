@@ -1,4 +1,4 @@
-package twitter.src.main.java.api;
+package api;
 
 /**
  * This program exercises the DPDatabaseAPI (MySQL implementation).
@@ -6,16 +6,16 @@ package twitter.src.main.java.api;
  * the underlying database is Relational, or MySQL.
 
  */
-public class DoctorPatient {
+public class TwitterDriver {
 
     private static DPDatabaseAPI api = new DPDatabaseMysql();
 
     public static void main(String[] args) throws Exception {
 
     	// Authenticate your access to the server.
-		String url =  "jdbc:mysql://localhost:3306/doctorpatient?serverTimezone=EST5EDT";
-		String user = System.getenv("DOCPAT_USER");
-		String password = System.getenv("DOCPAT_PASSWORD");
+		String url =  "jdbc:mysql://localhost:3306/twitter?serverTimezone=EST5EDT";
+		String user = System.getenv("TWITTER_USER");
+		String password = System.getenv("TWITTER_PASSWORD");
 
 		api.authenticate(url, user, password); // DON'T HARDCODE PASSWORDS!
 /**
