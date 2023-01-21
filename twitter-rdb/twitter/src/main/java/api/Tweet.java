@@ -8,10 +8,10 @@ public class Tweet {
     private String tweet_text;
 
 
-    public Tweet(int user_ID, String tweet_ts, String tweet_text) {
+    public Tweet(int user_ID, int i, String tweet_text) {
         this.tweet_ID = -1;
         this.user_ID = user_ID;
-        this.tweet_ts = tweet_ts;
+        this.tweet_ts = "";
         this.tweet_text = tweet_text;
     }
 

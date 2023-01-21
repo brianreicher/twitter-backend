@@ -1,17 +1,22 @@
 CREATE DATABASE `TWITTER`;
 
+GRANT ALL PRIVILEGES ON TWITTER.* TO 'TWITTER_USER'@'%';
+
+FLUSH PRIVILEGES;
+
 DROP TABLE IF EXISTS `tweets`;
 
 CREATE TABLE `tweets`(
-    `user_id` varchar(50) NOT NULL,
-    `text` varchar(255) NOT NULL,
-    `tweet_id` BIGINT NOT NULL, AUTO_INCREMENT, 
-    `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-
+    `tweet_id` INT NOT NULL AUTO_INCREMENT, 
+    `user_id` INT NOT NULL,
+    `tweet_ts` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `tweet_text` VARCHAR(140) NOT NULL,
+    PRIMARY KEY (`tweet_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `users`;
+DROP TABLE IF EXISTS `follows`;
 
-CREATE TABLE `users`(
-
-)
+CREATE TABLE `follows`(
+    `user_id` varchar(50) NOT NULL,
+    `follows_id` varchar(50) NOT NULL,
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
