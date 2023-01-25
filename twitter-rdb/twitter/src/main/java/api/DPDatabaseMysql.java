@@ -1,6 +1,7 @@
 package api;
 
 import java.sql.*;
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -70,14 +71,13 @@ public class DPDatabaseMysql implements DPDatabaseAPI {
     @Override
     public List<Tweet> getTimeline(Integer userID) {
 
-        // TODO: change query
-        String sql = "select doctor_id, lastname, firstname, new_patients, specialty, h.name hospital "+
-                     "from doctor d join specialty using (specialty_id) " +
-                     "join hospital h using (hospital_id) "+
-                     "where new_patients = 1;";
+        // TODO: update query
+        String sql = "select tweet_id, user_id, tweet_ts, tweet_text"+
+                     "from tweets t join follows f on (t.user_id = f.follows_id) " +
+                     "where user_id = " + userID + ";";
+
 
         List<Tweet> timeline = new ArrayList<Tweet>();
-
 
         try {
             // get connection and initialize statement
@@ -85,7 +85,7 @@ public class DPDatabaseMysql implements DPDatabaseAPI {
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
             while (rs.next() != false)
-                timeline.add(new Tweet(rs.getInt("tweet_id"), rs.getInt("user_id"), rs.getString("tweet_text")));
+                timeline.add(new Tweet(rs.getInt("tweet_id"), rs.getInt("user_id"), rs.getString("tweet_ts"), rs.getString("tweet_text")));
             rs.close();
             stmt.close();
         } catch (SQLException e) {

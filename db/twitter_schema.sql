@@ -1,22 +1,23 @@
+DROP DATABASE IF EXISTS `TWITTER`;
 CREATE DATABASE `TWITTER`;
 
-GRANT ALL PRIVILEGES ON TWITTER.* TO 'TWITTER_USER'@'%';
-
-FLUSH PRIVILEGES;
 
 DROP TABLE IF EXISTS `tweets`;
-
 CREATE TABLE `tweets`(
-    `tweet_id` INT NOT NULL AUTO_INCREMENT, 
+    `tweet_id` INT NOT NULL, 
     `user_id` INT NOT NULL,
-    `tweet_ts` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `tweet_ts` TIMESTAMP NOT NULL,
     `tweet_text` VARCHAR(140) NOT NULL,
     PRIMARY KEY (`tweet_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS `follows`;
+CREATE INDEX index_user_tweet ON tweets (user_id);
 
+
+DROP TABLE IF EXISTS `follows`;
 CREATE TABLE `follows`(
     `user_id` varchar(50) NOT NULL,
     `follows_id` varchar(50) NOT NULL,
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE INDEX index_user_follower ON follows (user_id, follows_id);
