@@ -1,21 +1,23 @@
 package api;
 
+import java.sql.*;
+
 public class Tweet {
 
     private int tweet_ID;
     private int user_ID;
-    private String tweet_ts;
+    private Timestamp tweet_ts;
     private String tweet_text;
 
 
-    public Tweet(int user_ID, int i, String tweet_text) {
+    public Tweet(int user_ID, Timestamp tweet_ts, String tweet_text) {
         this.tweet_ID = -1;
         this.user_ID = user_ID;
-        this.tweet_ts = "";
+        this.tweet_ts = tweet_ts;
         this.tweet_text = tweet_text;
     }
 
-    public Tweet(int tweet_ID, int user_ID, String tweet_ts, String tweet_text) {
+    public Tweet(int tweet_ID, int user_ID, Timestamp tweet_ts, String tweet_text) {
         this.tweet_ID = tweet_ID;
         this.user_ID = user_ID;
         this.tweet_ts = tweet_ts;
@@ -48,11 +50,11 @@ public class Tweet {
         this.user_ID = user_ID;
     }
 
-    public String getTweetTimeStamp() {
+    public Timestamp getTweetTimeStamp() {
         return tweet_ts;
     }
 
-    public void setTweetTimeStamp(String tweet_ts) {
+    public void setTweetTimeStamp(Timestamp tweet_ts) {
         this.tweet_ts = tweet_ts;
     }    
     
@@ -63,6 +65,4 @@ public class Tweet {
     public void setTweetText(String tweet_text) {
         this.tweet_text = tweet_text;
     }
-
-
 }

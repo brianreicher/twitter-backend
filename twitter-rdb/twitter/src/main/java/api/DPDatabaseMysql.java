@@ -29,23 +29,9 @@ public class DPDatabaseMysql implements DPDatabaseAPI {
 
     @Override
     public void postTweet(Tweet t) {
-        String sql = "INSERT INTO tweets (user_id, tweet_text) VALUES" +
-                "('"+t.getUserID()+"','"+t.getTweetText()+"')";
-
-        try {
-            // get connection and initialize statement
-            Connection con = dbu.getConnection(); // get the active connection
-            Statement stmt = con.createStatement();
-            stmt.executeUpdate(sql);
-
-            // Cleanup
-            stmt.close();
-
-        } catch (SQLException e) {
-            System.err.println("ERROR: Could not insert record: "+sql);
-            System.err.println(e.getMessage());
-            e.printStackTrace();
-        }        
+        String sql = "INSERT INTO tweets (user_id, tweet_ts, tweet_text) VALUES" +
+                "('"+t.getUserID()+"','"+t.getTweetTimeStamp()+"','"+t.getTweetText()+"')";
+        dbu.insertOneRecord(sql);
     }
 
 
@@ -67,14 +53,12 @@ public class DPDatabaseMysql implements DPDatabaseAPI {
         }  
     }
 
-
     @Override
     public List<Tweet> getTimeline(Integer userID) {
 
-        // TODO: update query
-        String sql = "select tweet_id, user_id, tweet_ts, tweet_text"+
-                     "from tweets t join follows f on (t.user_id = f.follows_id) " +
-                     "where user_id = " + userID + ";";
+        String sql = "SELECT t.tweet_id, t.user_id, t.tweet_ts, t.tweet_text"+
+                     "FROM tweets t join follows f on t.user_id = f.follows_id " +
+                     "where f.user_id = " + userID + ";";
 
 
         List<Tweet> timeline = new ArrayList<Tweet>();
@@ -84,8 +68,9 @@ public class DPDatabaseMysql implements DPDatabaseAPI {
             Connection con = dbu.getConnection();
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
-            while (rs.next() != false)
-                timeline.add(new Tweet(rs.getInt("tweet_id"), rs.getInt("user_id"), rs.getString("tweet_ts"), rs.getString("tweet_text")));
+            while (rs.next()){
+                timeline.add(new Tweet(rs.getInt("tweet_id"), rs.getInt("user_id"), rs.getTimestamp("tweet_ts"), rs.getString("tweet_text")));
+            }
             rs.close();
             stmt.close();
         } catch (SQLException e) {
@@ -98,22 +83,84 @@ public class DPDatabaseMysql implements DPDatabaseAPI {
 
 
     @Override
-    public List<Integer> getFollowers(Integer userID) {
-        // TODO Auto-generated method stub
-        return null;
+    public Set<Integer> getFollowers(Integer userID) {
+        String sql = "SELECT follows_id"+
+                     "FROM follows" +
+                     "where user_id = " + userID + ";";
+
+        List<Integer> followers = new ArrayList<Integer>();
+
+        try {
+            // get connection and initialize statement
+            Connection con = dbu.getConnection();
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            while (rs.next()){
+                followers.add(rs.getInt("follows_id"));
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            e.printStackTrace();
+        }
+
+        // utlize set to eliminate duplicates
+        return new HashSet<>(followers);    
     }
 
 
     @Override
-    public List<Integer> getFollowees(Integer userID) {
-        // TODO Auto-generated method stub
-        return null;
+    public Set<Integer> getFollowees(Integer userID) {
+        String sql = "SELECT user_id"+
+                     "FROM follows" +
+                     "where follows_id = " + userID + ";";
+
+        List<Integer> followees = new ArrayList<Integer>();
+
+        try {
+        // get connection and initialize statement
+            Connection con = dbu.getConnection();
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            while (rs.next()){
+                followees.add(rs.getInt("user_id"));
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            e.printStackTrace();
+        }
+
+        // utlize set to eliminate duplicates
+        return new HashSet<>(followees);   
     }
 
 
     @Override
     public List<Tweet> getTweets(Integer userID) {
-        // TODO Auto-generated method stub
-        return null;
+        String sql = "SELECT *"+
+                    "FROM tweets" +
+                    "where follows_id = " + userID + ";";
+
+        List<Tweet> tweets = new ArrayList<Tweet>();
+
+        try {
+        // get connection and initialize statement
+            Connection con = dbu.getConnection();
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            while (rs.next()){
+                tweets.add(new Tweet(rs.getInt("tweet_id"), rs.getInt("user_id"), rs.getTimestamp("tweet_ts"), rs.getString("tweet_text")));
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return tweets;
     }
 }

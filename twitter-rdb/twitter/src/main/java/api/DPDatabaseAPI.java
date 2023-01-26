@@ -1,6 +1,7 @@
 package api;
 
 import java.util.List;
+import java.util.Set;
 
 public interface DPDatabaseAPI {
 
@@ -31,7 +32,7 @@ public interface DPDatabaseAPI {
      * @param userId The user's unique identifier
      * @return A list of userIDs
      */
-    public List<Integer> getFollowers(Integer userID);
+    public Set<Integer> getFollowers(Integer userID);
 
 
     /**
@@ -39,7 +40,7 @@ public interface DPDatabaseAPI {
      * @param userId The user's unique identifier
      * @return A list of userIDs
      */
-    public List<Integer> getFollowees(Integer userID); // alternate using a stored procedure
+    public Set<Integer> getFollowees(Integer userID); // alternate using a stored procedure
 
 
     /**
