@@ -1,8 +1,6 @@
 package api;
 
 import java.sql.*;
-import java.sql.Date;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import database.DBUtils;
@@ -162,5 +160,28 @@ public class DPDatabaseMysql implements DPDatabaseAPI {
         }
 
         return tweets;
+    }
+
+    @Override
+    public List<Integer> getAllUsers() {
+        String sql = "SELECT user_id FROM tweet UNION SELECT user_id FROM follows UNION select follows_id FROM follows";
+
+        List<Integer> users = new ArrayList<Integer>();
+
+        try {
+        // get connection and initialize statement
+            Connection con = dbu.getConnection();
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            while (rs.next()){
+                users.add(rs.getInt("user_id"));
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return users;
     }
 }

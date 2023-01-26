@@ -50,7 +50,8 @@ public interface DPDatabaseAPI {
      */
     public List<Tweet> getTweets(Integer userID);
 
-
+    public List<Integer> getAllUsers();
+    
     /**
      * Set connection settings
      * @param url
