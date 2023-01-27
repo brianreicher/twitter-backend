@@ -44,18 +44,18 @@ public class TwitterDriver {
 	public static void getUserTimeline(){
 		// get list of all potential users to pick from
 		List<Integer> all_users = api.getAllUsers();
+
 		int total_timelines_fetched = 0;
-		System.out.println(all_users.size());
+
 		long start_time = System.nanoTime();
 		long end_time = 0;
-		while(Math.abs((end_time - start_time))/ 10e8 < 60){
+		while(((end_time - start_time)/1e9) < 60){
 			int random_user_id = all_users.get((int)(Math.random() * all_users.size()));
 			api.getTimeline(random_user_id);
 			total_timelines_fetched++;
-			// end_time = System.nanoTime();
+			end_time = System.nanoTime();
 		}
 
-		end_time = System.nanoTime();
 		double elapsed_time = (end_time - start_time)/10e8;
 
 
@@ -99,6 +99,41 @@ public class TwitterDriver {
 		System.out.println("Tweets Posted per Second: " + total_tweets_posted/elapsed_time);
 	}
 
+	public static void postAllFollowers(){
+		String csv_line;
+		BufferedReader buff;
+		try {
+			buff = new BufferedReader(new FileReader("db/follows.csv"));
+			buff.readLine();
+			while((csv_line = buff.readLine()) != null) {
+				api.postFollow(formatUserFromCSV(csv_line));
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("Added all followers to the database");
+	}
+
+	public static User formatUserFromCSV(String userline){
+		List<String> user_values = new ArrayList<String>();
+
+		try(Scanner uScanner = new Scanner(userline)){
+			uScanner.useDelimiter(",");
+			while (uScanner.hasNext()){
+				user_values.add(uScanner.next());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return new User(
+						Integer.parseInt(user_values.get(0)),
+						Integer.parseInt(user_values.get(1))
+		);
+	}
+
 	public static Tweet formatTweetFromCSV(String tweetline){
 		List<String> tweet_values = new ArrayList<String>();
 
@@ -124,11 +159,11 @@ public class TwitterDriver {
 		String url =  "jdbc:mysql://localhost:3306/twitter?serverTimezone=EST5EDT";
 		String user = System.getenv("TWITTER_USERNAME");
 		String password = System.getenv("TWITTER_PASSWORD");
-		System.out.println(user + " " + password);
 	
-		api.authenticate(url, "root", ""); // DON'T HARDCODE PASSWORDS!
+		api.authenticate(url, user, password); // DON'T HARDCODE PASSWORDS!
 		
 		// postAllTweets();
+		// postAllFollowers();
 		getUserTimeline();
 
 		api.closeConnection();

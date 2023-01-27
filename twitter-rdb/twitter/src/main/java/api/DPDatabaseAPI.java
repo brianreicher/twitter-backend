@@ -18,6 +18,7 @@ public interface DPDatabaseAPI {
      */
     public void postTweets(List<Tweet> twlist);
 
+    public void postFollow(User user);
 
     /**
      * Get a given user's home timeline
@@ -51,7 +52,7 @@ public interface DPDatabaseAPI {
     public List<Tweet> getTweets(Integer userID);
 
     public List<Integer> getAllUsers();
-    
+        
     /**
      * Set connection settings
      * @param url

@@ -54,10 +54,9 @@ public class DPDatabaseMysql implements DPDatabaseAPI {
     @Override
     public List<Tweet> getTimeline(Integer userID) {
 
-        String sql = "SELECT t.tweet_id, t.user_id, t.tweet_ts, t.tweet_text"+
-                     "FROM tweets t join follows f on t.user_id = f.follows_id " +
-                     "where f.user_id = " + userID + ";";
-
+        String sql = String.format("SELECT tweets.tweet_id as tweet_id, follows.follows_id as user_id, tweets.tweet_ts as tweet_ts, tweets.tweet_text as tweet_text " +
+                     "FROM tweets JOIN follows on tweets.user_id = follows.follows_id " +
+                     "WHERE follows.user_id = %s LIMIT 10;", userID);
 
         List<Tweet> timeline = new ArrayList<Tweet>();
 
@@ -184,4 +183,13 @@ public class DPDatabaseMysql implements DPDatabaseAPI {
         }
         return users;
     }
+
+    @Override
+    public void postFollow(User user){
+        String sql = "INSERT INTO follows (user_id, follows_id) VALUES" +
+        "('"+user.getUserID()+"','"+user.getFollowsID()+"')";
+        dbu.insertOneRecord(sql);
+    }
+
+
 }
