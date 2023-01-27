@@ -23,7 +23,7 @@ public class TwitterDriver {
 	 * Implemented here with a MySQL API call and easily interchangeable with Redis.
 	 * @param user_id The specified user_id
 	 */
-	public static void getUserTimelines(Integer user_id){
+	public static void getHomeTimelines(Integer user_id){
 		// get list of all potential users to pick from
 		List<Integer> all_users = api.getAllUsers();
 
@@ -54,7 +54,7 @@ public class TwitterDriver {
 	 * Driver method to fetch as many user' timeline information as possible in 60 seconds. 
 	 * Implemented here with a MySQL API call and easily interchangeable with Redis.
 	 */
-	public static void getUserTimelines(){
+	public static void getHomeTimelines(){
 		// get list of all potential users to pick from
 		List<Integer> all_users = api.getAllUsers();
 
@@ -125,7 +125,6 @@ public class TwitterDriver {
 		// RETURN METRICS FOR ALL POSTED TWEETS
 		System.out.println("Time Taken to Post Tweets (seconds): " + elapsed_time);
 		System.out.println("Total Tweets Posted: " + total_tweets_posted);
-		System.out.println("Tweets Posted per Minute: " + (60 * total_tweets_posted/elapsed_time));
 		System.out.println("Tweets Posted per Second: " + total_tweets_posted/elapsed_time);
 	}
 
@@ -220,10 +219,10 @@ public class TwitterDriver {
 		postAllFollowers();
 
 		// Fetch random user timelines of 10 tweets and display metrics
-		getUserTimelines();
+		getHomeTimelines();
 
 		// Fetch the timeline of a specif user_id
-		getUserTimelines(0);
+		getHomeTimelines(0);
 
 		// close database connection
 		api.closeConnection();
