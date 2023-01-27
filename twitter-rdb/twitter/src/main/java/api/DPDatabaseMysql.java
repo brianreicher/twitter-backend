@@ -27,8 +27,8 @@ public class DPDatabaseMysql implements DPDatabaseAPI {
 
     @Override
     public void postTweet(Tweet t) {
-        String sql = "INSERT INTO tweets (user_id, tweet_ts, tweet_text) VALUES" +
-                "('"+t.getUserID()+"','"+t.getTweetTimeStamp()+"','"+t.getTweetText()+"')";
+        String sql = "INSERT INTO tweets (user_id, tweet_text) VALUES" +
+                "('"+t.getUserID()+"','"+t.getTweetText()+"')";
         dbu.insertOneRecord(sql);
     }
 
@@ -42,15 +42,19 @@ public class DPDatabaseMysql implements DPDatabaseAPI {
     @Override
     public void postTweets(List<Tweet> twlist) {
         String sql = "INSERT INTO tweets (user_id, tweet_text) VALUES (?,?)";
+
         try {
             Connection con = dbu.getConnection();
             PreparedStatement pstmt = con.prepareStatement(sql);
+            con.setAutoCommit(false);
 
             for (Tweet t : twlist) {
                 pstmt.setInt(1, t.getUserID());
                 pstmt.setString(2, t.getTweetText());
-                pstmt.execute();
+                pstmt.addBatch();
             }
+            pstmt.executeBatch();
+
             pstmt.close();
         } catch (SQLException e) {
             e.printStackTrace();

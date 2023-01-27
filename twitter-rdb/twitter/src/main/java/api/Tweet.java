@@ -24,6 +24,11 @@ public class Tweet {
         this.tweet_text = tweet_text;
     }
 
+    public Tweet(int user_ID, String tweet_text) {
+        this.user_ID = user_ID;
+        this.tweet_text = tweet_text;
+    }
+
     @Override
     public String toString() {
         return "Tweet{" +

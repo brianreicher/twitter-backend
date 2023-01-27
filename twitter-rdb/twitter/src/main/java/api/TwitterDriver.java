@@ -99,6 +99,47 @@ public class TwitterDriver {
 		System.out.println("Tweets Posted per Second: " + total_tweets_posted/elapsed_time);
 	}
 
+	public static void postAllTweetsBatched(int batch_size){
+
+		long start_time = System.nanoTime();
+
+		// read CSV file containing tweets
+		String csv_line;
+		BufferedReader buff;
+		int total_tweets_posted = 0; 
+		try {
+			buff = new BufferedReader(new FileReader("db/tweet.csv"));
+			buff.readLine();
+
+			List<Tweet> tweet_batch = new ArrayList<Tweet>();
+			while((csv_line = buff.readLine()) != null) {
+				tweet_batch.add(formatTweetFromCSV(csv_line));
+				total_tweets_posted++;
+
+				if(total_tweets_posted % batch_size == 0){
+					api.postTweets(tweet_batch);
+				}
+				System.out.println("Total Tweets Sent: " + total_tweets_posted);
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		long end_time = System.nanoTime();
+
+		
+		double elapsed_time = (end_time-start_time)/10e8;
+
+		// RETURN METRICS FOR ALL POSTED TWEETS
+		System.out.println("Time Taken to Post Tweets (seconds): " + elapsed_time);
+		System.out.println("Total Tweets Posted: " + total_tweets_posted);
+		System.out.println("Tweets Posted per Minute: " + (60 * total_tweets_posted/elapsed_time));
+		System.out.println("Tweets Posted per Second: " + total_tweets_posted/elapsed_time);
+	}
+
+
 	public static void postAllFollowers(){
 		String csv_line;
 		BufferedReader buff;
@@ -148,7 +189,6 @@ public class TwitterDriver {
 
 		return new Tweet(
 						Integer.parseInt(tweet_values.get(0)),
-						new Timestamp(System.currentTimeMillis()),
 						tweet_values.get(1)
 		);
 	}
@@ -163,16 +203,16 @@ public class TwitterDriver {
 		api.authenticate(url, user, password); // DON'T HARDCODE PASSWORDS!
 		
 		// Post 1,000,000 tweets to the server and display metrics
-		postAllTweets();
+		postAllTweetsBatched(5);
 
 		// Post all follower/followee relationships
-		postAllFollowers();
+		// postAllFollowers();
 
 		// Fetch random user timelines of 10 tweets and display metrics
-		getUserTimelines();
+		// getUserTimelines();
 
 		// Fetch the timeline of a specif user_id
-		getUserTimelines(0);
+		// getUserTimelines(0);
 
 		api.closeConnection();
 
