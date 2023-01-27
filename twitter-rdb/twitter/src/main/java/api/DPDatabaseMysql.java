@@ -32,6 +32,12 @@ public class DPDatabaseMysql implements DPDatabaseAPI {
         dbu.insertOneRecord(sql);
     }
 
+    @Override
+    public void postFollow(User user){
+        String sql = "INSERT INTO follows (user_id, follows_id) VALUES" +
+        "('"+user.getUserID()+"','"+user.getFollowsID()+"')";
+        dbu.insertOneRecord(sql);
+    }
 
     @Override
     public void postTweets(List<Tweet> twlist) {
@@ -54,9 +60,9 @@ public class DPDatabaseMysql implements DPDatabaseAPI {
     @Override
     public List<Tweet> getTimeline(Integer userID) {
 
-        String sql = String.format("SELECT tweets.tweet_id as tweet_id, follows.follows_id as user_id, tweets.tweet_ts as tweet_ts, tweets.tweet_text as tweet_text " +
+        String sql = "SELECT tweets.tweet_id as tweet_id, follows.follows_id as user_id, tweets.tweet_ts as tweet_ts, tweets.tweet_text as tweet_text " +
                      "FROM tweets JOIN follows on tweets.user_id = follows.follows_id " +
-                     "WHERE follows.user_id = %s LIMIT 10;", userID);
+                     "WHERE follows.user_id = " + userID +" LIMIT 10;";
 
         List<Tweet> timeline = new ArrayList<Tweet>();
 
@@ -78,6 +84,31 @@ public class DPDatabaseMysql implements DPDatabaseAPI {
 
     }
 
+    @Override
+    public List<Tweet> getTweets(Integer userID) {
+        String sql = "SELECT *"+
+                    "FROM tweets" +
+                    "where follows_id = " + userID + ";";
+
+        List<Tweet> tweets = new ArrayList<Tweet>();
+
+        try {
+        // get connection and initialize statement
+            Connection con = dbu.getConnection();
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            while (rs.next()){
+                tweets.add(new Tweet(rs.getInt("tweet_id"), rs.getInt("user_id"), rs.getTimestamp("tweet_ts"), rs.getString("tweet_text")));
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return tweets;
+    }
 
     @Override
     public Set<Integer> getFollowers(Integer userID) {
@@ -136,32 +167,6 @@ public class DPDatabaseMysql implements DPDatabaseAPI {
 
 
     @Override
-    public List<Tweet> getTweets(Integer userID) {
-        String sql = "SELECT *"+
-                    "FROM tweets" +
-                    "where follows_id = " + userID + ";";
-
-        List<Tweet> tweets = new ArrayList<Tweet>();
-
-        try {
-        // get connection and initialize statement
-            Connection con = dbu.getConnection();
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-            while (rs.next()){
-                tweets.add(new Tweet(rs.getInt("tweet_id"), rs.getInt("user_id"), rs.getTimestamp("tweet_ts"), rs.getString("tweet_text")));
-            }
-            rs.close();
-            stmt.close();
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            e.printStackTrace();
-        }
-
-        return tweets;
-    }
-
-    @Override
     public List<Integer> getAllUsers() {
         String sql = "SELECT user_id FROM tweets UNION SELECT user_id FROM follows UNION select follows_id FROM follows";
 
@@ -183,13 +188,4 @@ public class DPDatabaseMysql implements DPDatabaseAPI {
         }
         return users;
     }
-
-    @Override
-    public void postFollow(User user){
-        String sql = "INSERT INTO follows (user_id, follows_id) VALUES" +
-        "('"+user.getUserID()+"','"+user.getFollowsID()+"')";
-        dbu.insertOneRecord(sql);
-    }
-
-
 }

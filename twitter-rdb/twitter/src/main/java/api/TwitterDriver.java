@@ -18,7 +18,7 @@ public class TwitterDriver {
 
     private static DPDatabaseAPI api = new DPDatabaseMysql();
 
-	public static void getUserTimeline(Integer user_id){
+	public static void getUserTimelines(Integer user_id){
 		// get list of all potential users to pick from
 		List<Integer> all_users = api.getAllUsers();
 		double elapsed_time = 0;
@@ -41,7 +41,7 @@ public class TwitterDriver {
 		System.out.println("Time Taken to Get Timeline (seconds): " + elapsed_time);
 	}
 
-	public static void getUserTimeline(){
+	public static void getUserTimelines(){
 		// get list of all potential users to pick from
 		List<Integer> all_users = api.getAllUsers();
 
@@ -162,9 +162,17 @@ public class TwitterDriver {
 	
 		api.authenticate(url, user, password); // DON'T HARDCODE PASSWORDS!
 		
-		// postAllTweets();
-		// postAllFollowers();
-		getUserTimeline();
+		// Post 1,000,000 tweets to the server and display metrics
+		postAllTweets();
+
+		// Post all follower/followee relationships
+		postAllFollowers();
+
+		// Fetch random user timelines of 10 tweets and display metrics
+		getUserTimelines();
+
+		// Fetch the timeline of a specif user_id
+		getUserTimelines(0);
 
 		api.closeConnection();
 
