@@ -44,19 +44,25 @@ public class TwitterDriver {
 	public static void getUserTimeline(){
 		// get list of all potential users to pick from
 		List<Integer> all_users = api.getAllUsers();
-		int random_user_id = all_users.get((int)(Math.random() * all_users.size()));
-
+		int total_timelines_fetched = 0;
+		// print?
 		long start_time = System.nanoTime();
 		long end_time = 0;
 		while(Math.abs((end_time - start_time))/ 10e8 < 60){
+			int random_user_id = all_users.get((int)(Math.random() * all_users.size()));
 			api.getTimeline(random_user_id);
-			end_time = System.nanoTime();
+			total_timelines_fetched++;
+			// end_time = System.nanoTime();
 		}
+
+		end_time = System.nanoTime();
 		double elapsed_time = (end_time - start_time)/10e8;
 
 
 		// RETURN METRICS FOR FETCHED TIMELINE
-		System.out.println("Time Taken to Get Timeline (seconds): " + elapsed_time);
+		System.out.println("Total Elapsed Time (seconds): " + elapsed_time);
+        System.out.println("Total Timelines Fetched: " + total_timelines_fetched);
+        System.out.println("Timelines per Second: " + total_timelines_fetched/elapsed_time);
 	}
 
 	public static void postAllTweets(){
@@ -68,11 +74,12 @@ public class TwitterDriver {
 		BufferedReader buff;
 		int total_tweets_posted = 0; 
 		try {
-			buff = new BufferedReader(new FileReader("../../../../../../db/tweets.csv"));
+			buff = new BufferedReader(new FileReader("db/tweet.csv"));
 			buff.readLine();
 			while((csv_line = buff.readLine()) != null) {
 				api.postTweet(formatTweetFromCSV(csv_line));
 				total_tweets_posted++;
+				System.out.println("Total Tweets Sent: " + total_tweets_posted);
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -114,13 +121,14 @@ public class TwitterDriver {
     public static void main(String[] args) throws Exception {
 
     	// Authenticate your access to the server.
-		String url =  "jdbc:mysql://localhost:3306/TWITTER?serverTimezone=EST5EDT";
+		String url =  "jdbc:mysql://localhost:3306/twitter?serverTimezone=EST5EDT";
 		String user = System.getenv("TWITTER_USERNAME");
 		String password = System.getenv("TWITTER_PASSWORD");
+		System.out.println(user + " " + password);
 	
-		api.authenticate(url, user, password); // DON'T HARDCODE PASSWORDS!
+		api.authenticate(url, "root", "NYGiants9021#"); // DON'T HARDCODE PASSWORDS!
 		
-		postAllTweets();
+		// postAllTweets();
 		getUserTimeline();
 
 		api.closeConnection();

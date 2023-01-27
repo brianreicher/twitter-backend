@@ -164,7 +164,7 @@ public class DPDatabaseMysql implements DPDatabaseAPI {
 
     @Override
     public List<Integer> getAllUsers() {
-        String sql = "SELECT user_id FROM tweet UNION SELECT user_id FROM follows UNION select follows_id FROM follows";
+        String sql = "SELECT user_id FROM tweets UNION SELECT user_id FROM follows UNION select follows_id FROM follows";
 
         List<Integer> users = new ArrayList<Integer>();
 
