@@ -45,7 +45,7 @@ public class TwitterDriver {
 		// get list of all potential users to pick from
 		List<Integer> all_users = api.getAllUsers();
 		int total_timelines_fetched = 0;
-		// print?
+		System.out.println(all_users.size());
 		long start_time = System.nanoTime();
 		long end_time = 0;
 		while(Math.abs((end_time - start_time))/ 10e8 < 60){
@@ -126,7 +126,7 @@ public class TwitterDriver {
 		String password = System.getenv("TWITTER_PASSWORD");
 		System.out.println(user + " " + password);
 	
-		api.authenticate(url, "root", "NYGiants9021#"); // DON'T HARDCODE PASSWORDS!
+		api.authenticate(url, "root", ""); // DON'T HARDCODE PASSWORDS!
 		
 		// postAllTweets();
 		getUserTimeline();
