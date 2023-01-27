@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.*;
 import java.util.*;
 
 
@@ -204,15 +203,16 @@ public class TwitterDriver {
 		
 		// Post 1,000,000 tweets to the server and display metrics
 		postAllTweetsBatched(5);
+		postAllTweets();
 
 		// Post all follower/followee relationships
-		// postAllFollowers();
+		postAllFollowers();
 
 		// Fetch random user timelines of 10 tweets and display metrics
-		// getUserTimelines();
+		getUserTimelines();
 
 		// Fetch the timeline of a specif user_id
-		// getUserTimelines(0);
+		getUserTimelines(0);
 
 		api.closeConnection();
 
