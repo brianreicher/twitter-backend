@@ -22,6 +22,7 @@ public class DPDatabaseMysql implements DPDatabaseAPI {
     /**
      * Close the connection when application finishes
      */
+    @Override
     public void closeConnection() { dbu.closeConnection(); }
 
 
@@ -34,7 +35,6 @@ public class DPDatabaseMysql implements DPDatabaseAPI {
         dbu.insertOneRecord(sql);
     }
 
-    @Override
     public void postFollow(User user){
         // SQL statement
         String sql = "INSERT INTO follows (user_id, follows_id) VALUES" +
@@ -46,7 +46,6 @@ public class DPDatabaseMysql implements DPDatabaseAPI {
     /**
      * TODO: working slower than non-batching
      */
-    @Override
     public void postTweets(List<Tweet> twlist) {
         // SQL statement
         String sql = "INSERT INTO tweets (user_id, tweet_text) VALUES (?,?)";

@@ -2,6 +2,8 @@ package database;
 
 import java.sql.*;
 
+import redis.clients.jedis.Jedis;
+
 public class DBUtils {
 
 
@@ -9,13 +11,20 @@ public class DBUtils {
     private String user;
     private String password;
     private Connection con = null;
+    public final Jedis j;
 
     public DBUtils(String url, String user, String password) {
         this.url = url;
         this.user = user;
         this.password = password;
         this.con = getConnection();
+        this.j = null;
     }
+
+    public DBUtils(){
+        this.j = new Jedis();
+    }
+
 
     public Connection getConnection()
     {
@@ -40,7 +49,6 @@ public class DBUtils {
             e.printStackTrace();
         }
     }
-
 
     public int insertOneRecord(String insertSQL)
     {

@@ -4,8 +4,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.*;
-import java.util.function.Function;
 
 
 /**
@@ -16,14 +16,12 @@ import java.util.function.Function;
  */
 public class TwitterDriver {
 
-    private static DPDatabaseAPI api = new DPDatabaseMysql();
-
 	/**
 	 * Driver method to get a specific user's timeline information. 
 	 * Implemented here with a MySQL API call and easily interchangeable with Redis.
 	 * @param user_id The specified user_id
 	 */
-	public static void getHomeTimelines(Integer user_id){
+	public static void getHomeTimelines(DPDatabaseAPI api, Integer user_id){
 		// get list of all potential users to pick from
 		List<Integer> all_users = api.getAllUsers();
 
@@ -54,7 +52,7 @@ public class TwitterDriver {
 	 * Driver method to fetch as many user' timeline information as possible in 60 seconds. 
 	 * Implemented here with a MySQL API call and easily interchangeable with Redis.
 	 */
-	public static void getHomeTimelines(){
+	public static void getHomeTimelines(DPDatabaseAPI api){
 		// get list of all potential users to pick from
 		List<Integer> all_users = api.getAllUsers();
 
@@ -91,7 +89,7 @@ public class TwitterDriver {
 	 * Driver method to post all tweets to the database. 
 	 * Implemented here with a MySQL API call and easily interchangeable with Redis.
 	 */
-	public static void postAllTweets(){
+	public static void postAllTweets(DPDatabaseAPI api){
 		// initialize the timer
 		long start_time = 0;
 
@@ -107,7 +105,7 @@ public class TwitterDriver {
 			buff.readLine();
 			// if the line is not empty, the call the API and post the tweet
 			while((csv_line = buff.readLine()) != null) {
-				api.postTweet(formatTweetFromCSV(csv_line));
+				api.postTweet(formatTweetFromCSV(csv_line, total_tweets_posted));
 				// increment the total post counter
 				total_tweets_posted++;
 			}
@@ -131,7 +129,7 @@ public class TwitterDriver {
 	/**
 	 * Helper method to populate the follows table of the database.
 	 */
-	public static void postAllFollowers(){
+	public static void postAllFollowers(DPDatabaseAPI api){
 		// Read the csv
 		String csv_line;
 		BufferedReader buff;
@@ -182,7 +180,7 @@ public class TwitterDriver {
 	 * @param tweetline The line of the CSV file.
 	 * @return The newly created Tweet object from the CSV data.
 	 */
-	public static Tweet formatTweetFromCSV(String tweetline){
+	public static Tweet formatTweetFromCSV(String tweetline, int tweet_id){
 		// list of tweet values
 		List<String> tweet_values = new ArrayList<String>();
 
@@ -192,40 +190,73 @@ public class TwitterDriver {
 			while (tweetScanner.hasNext()){
 				// add the seperated values ot the list
 				tweet_values.add(tweetScanner.next());
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		// return the new Tweet object containing the line's contents
 		return new Tweet(
+						tweet_id,
 						Integer.parseInt(tweet_values.get(0)),
+						new Timestamp(System.currentTimeMillis()), 
 						tweet_values.get(1)
 		);
 	}
 
     public static void main(String[] args) throws Exception {
-
-    	// Authenticate your access to the server.
-		String url =  "jdbc:mysql://localhost:3306/twitter?serverTimezone=EST5EDT";
-		String user = System.getenv("TWITTER_USERNAME");
-		String password = System.getenv("TWITTER_PASSWORD");
-	
-		api.authenticate(url, user, password); // DON'T HARDCODE PASSWORDS!
 		
-		// Post 1,000,000 tweets to the server and display metrics
-		postAllTweets();
+		Scanner api_scanner = new Scanner(System.in);
+		System.out.println("Enter an API type to test (MySQL, Redis):");
+		String api_type = api_scanner.next();
+		api_scanner.close();
+		System.out.println("Utilizing " + api_type + " driver . . .");
 
-		// Post all follower/followee relationships
-		postAllFollowers();
+		switch (api_type.toLowerCase()) {
+			case "mysql":
+				
+				DPDatabaseAPI mysql_driver =  TwitterDriverType.createTwitterDriver(TwitterDriverType.DatabaseType.MYSQL);
+			
+				// Post 1,000,000 tweets to the server and display metrics
+				postAllTweets(mysql_driver);
+		
+				// Post all follower/followee relationships
+				postAllFollowers(mysql_driver);
+		
+				// Fetch random user timelines of 10 tweets and display metrics
+				getHomeTimelines(mysql_driver);
+		
+				// Fetch the timeline of a specif user_id
+				getHomeTimelines(mysql_driver, 0);
+		
+				// close database connection
+				mysql_driver.closeConnection();
+				break;
 
-		// Fetch random user timelines of 10 tweets and display metrics
-		getHomeTimelines();
-
-		// Fetch the timeline of a specif user_id
-		getHomeTimelines(0);
-
-		// close database connection
-		api.closeConnection();
+			case "redis":
+				DPDatabaseAPI redis_driver =  TwitterDriverType.createTwitterDriver(TwitterDriverType.DatabaseType.REDIS);
+			
+				// Post 1,000,000 tweets to the server and display metrics
+				postAllTweets(redis_driver);
+		
+				// Post all follower/followee relationships
+				// postAllFollowers(redis_driver);
+		
+				// // Fetch random user timelines of 10 tweets and display metrics
+				// getHomeTimelines(redis_driver);
+		
+				// // Fetch the timeline of a specif user_id
+				// getHomeTimelines(redis_driver, 0);
+		
+				// close database connection
+				redis_driver.closeConnection();
+				break;
+		
+			default:
+				System.out.println("Not implemented");
+				break;
+		}
+	
 
 	}
 }

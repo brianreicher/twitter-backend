@@ -12,13 +12,6 @@ public interface DPDatabaseAPI {
      */
     public void postTweet(Tweet t);
 
-    /**
-     * Posts many tweets.
-     * @param twlist A List of Tweets
-     */
-    public void postTweets(List<Tweet> twlist);
-
-    public void postFollow(User user);
 
     /**
      * Get a given user's home timeline
@@ -53,17 +46,13 @@ public interface DPDatabaseAPI {
 
     public List<Integer> getAllUsers();
         
-    /**
-     * Set connection settings
-     * @param url
-     * @param user
-     * @param password
-     */
-    public void authenticate(String url, String user, String password);
 
     /**
      * Close the connection when application finishes
      */
     public void closeConnection();
+
+
+    public void postFollow(User formatUserFromCSV);
 
 }

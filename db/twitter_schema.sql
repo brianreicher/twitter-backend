@@ -8,7 +8,7 @@ DROP TABLE IF EXISTS `tweets`;
 CREATE TABLE `tweets`(
     `tweet_id` SERIAL, 
     `user_id` INT NOT NULL,
-    `tweet_ts` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `tweet_ts` TIMESTAMP,
     `tweet_text` VARCHAR(140) NOT NULL,
     PRIMARY KEY (`tweet_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
