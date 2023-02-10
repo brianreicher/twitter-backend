@@ -22,18 +22,18 @@ public class DPDatabaseRedisEC extends DPDatabaseRedis {
     @Override
     public List<Tweet> getTimeline(Integer userID) {
         List<Integer> follows = new ArrayList<>(this.getFollowees(userID));
-
-        List<Tweet> total_tweets = new ArrayList<Tweet>();
-        for (int followId : follows) {
-            total_tweets.addAll(this.getTimeline(followId));
+        List<Tweet> allTweets = new ArrayList<Tweet>();
+        for (int followID : follows) {
+            allTweets.addAll(this.getRecentTweets(followID, TWEETS_PREFIX, 0, 9));
         }
-        total_tweets.sort(new TweetComparator());
+        allTweets.sort(new TweetComparator());
         List<Tweet> tweets = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            if (total_tweets.size() > 0) {
-                tweets.add(total_tweets.remove(total_tweets.size() - 1));
+            if (allTweets.size() > 0) {
+                tweets.add(allTweets.remove(allTweets.size() - 1));
             }
         }
-        return tweets;
+        return tweets;    
     }
+
 }

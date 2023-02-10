@@ -43,9 +43,7 @@ public class DPDatabaseMysql implements DPDatabaseAPI {
         dbu.insertOneRecord(sql);
     }
 
-    /**
-     * TODO: working slower than non-batching
-     */
+ 
     public void postTweets(List<Tweet> twlist) {
         // SQL statement
         String sql = "INSERT INTO tweets (user_id, tweet_text) VALUES (?,?)";
