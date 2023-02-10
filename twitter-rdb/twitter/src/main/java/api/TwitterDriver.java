@@ -215,14 +215,14 @@ public class TwitterDriver {
 		switch (api_type.toLowerCase()) {
 			case "mysql":
 				
-				DPDatabaseAPI mysql_driver =  TwitterDriverType.createTwitterDriver(TwitterDriverType.DatabaseType.MYSQL);
-			
+				DPDatabaseAPI mysql_driver =  TwitterDriverType.createTwitterDriver(TwitterDriverType.DatabaseType.MYSQL, false);
+				
 				// Post 1,000,000 tweets to the server and display metrics
 				postAllTweets(mysql_driver);
-		
+
 				// Post all follower/followee relationships
 				postAllFollowers(mysql_driver);
-		
+
 				// Fetch random user timelines of 10 tweets and display metrics
 				getHomeTimelines(mysql_driver);
 		
@@ -234,15 +234,19 @@ public class TwitterDriver {
 				break;
 
 			case "redis":
-				DPDatabaseAPI redis_driver =  TwitterDriverType.createTwitterDriver(TwitterDriverType.DatabaseType.REDIS);
+				DPDatabaseAPI redis_driver =  TwitterDriverType.createTwitterDriver(TwitterDriverType.DatabaseType.REDIS, false);
 			
-				// Post 1,000,000 tweets to the server and display metrics
-				postAllTweets(redis_driver);
-		
 				// Post all follower/followee relationships
+				System.out.println("Posting all follower/followee relationships: ");
 				postAllFollowers(redis_driver);
+
+				// Post 1,000,000 tweets to the server and display metrics
+				System.out.println("Posting all tweets: ");
+				postAllTweets(redis_driver);
+
 		
 				// // Fetch random user timelines of 10 tweets and display metrics
+				System.out.println("Fetching all user timelines randomly: ");
 				getHomeTimelines(redis_driver);
 		
 				// // Fetch the timeline of a specif user_id

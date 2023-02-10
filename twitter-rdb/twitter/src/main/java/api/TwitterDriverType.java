@@ -18,7 +18,7 @@ public class TwitterDriverType{
      * @param tt - the twitter type you would like to construct.
      * @return an instance of a twitter API to use in client programs.
      */
-    public static DPDatabaseAPI createTwitterDriver(DatabaseType d_type) {
+    public static DPDatabaseAPI createTwitterDriver(DatabaseType d_type, boolean flush) {
         switch (d_type) {
             case MYSQL: 
                 DPDatabaseMysql mysql_api = new DPDatabaseMysql();
@@ -30,7 +30,9 @@ public class TwitterDriverType{
             
             case REDIS:
                 DPDatabaseRedis redis_api = new DPDatabaseRedis();
-                redis_api.flushRedis();
+                if(flush){
+                    redis_api.flushRedis();
+                }
                 return redis_api;
 
             default:

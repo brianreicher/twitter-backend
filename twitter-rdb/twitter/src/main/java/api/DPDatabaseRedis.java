@@ -2,7 +2,6 @@ package api;
 
 import java.sql.Timestamp;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import redis.clients.jedis.*;
 import database.DBUtils;
@@ -37,24 +36,49 @@ public class DPDatabaseRedis implements DPDatabaseAPI {
 
     @Override
     public void postTweet(Tweet t) {
+
         String latestTweet = jedis_connection.get(LATEST_TWEET_ID_KEY);
         this.jedis_connection.hset(TWEET_HASH_KEY + latestTweet, TWEET_TS_KEY, t.getTweetTimeStamp().toString());
         this.jedis_connection.hset(TWEET_HASH_KEY + latestTweet, TWEET_TXT_KEY, t.getTweetText());
-        Set<Integer> followers = this.getFollowers(t.getUserID());
 
+        Set<Integer> followers = this.getFollowers(t.getUserID());
+        System.out.println("Tweet followers" + followers.size());
+        
         for (Integer follower : followers) {
             this.jedis_connection.lpush(TIMELINE_PREFIX + follower, latestTweet);
         }
         this.jedis_connection.lpush(TWEETS_PREFIX + t.getUserID(), latestTweet);
         jedis_connection.incr(LATEST_TWEET_ID_KEY);
+
     }
 
 
     @Override
     public List<Tweet> getTimeline(Integer userID) {
-        // int userId, String tweetSource, int start, int end
-        // userId, TIMELINE_PREFIX, 0, 10
         List<String> tweet_IDs = jedis_connection.lrange(TIMELINE_PREFIX + userID, 0, 10);
+        System.out.println("Number of tweet IDs: " + tweet_IDs.size());
+
+        List<Tweet> tweet_list = new ArrayList<Tweet>();
+        for (String tweet : tweet_IDs) {
+            int tweet_id = Integer.valueOf(tweet);
+
+            tweet_list.add(new Tweet(
+                                    tweet_id,
+                                    userID,
+                                    Timestamp.valueOf(jedis_connection.hget(TWEET_HASH_KEY + tweet_id, TWEET_TS_KEY)),
+                                    jedis_connection.hget(TWEET_HASH_KEY + tweet_id, TWEET_TXT_KEY)
+                                    ));
+        }
+        System.out.println("Timeline size: " + tweet_list.size());
+        return tweet_list;
+    }
+
+
+    @Override
+    public List<Tweet> getTweets(Integer userID) {
+        //         return getMostRecentTweetsFrom(userId, TWEETS_PREFIX, 0, -1);
+
+        List<String> tweet_IDs = jedis_connection.lrange(TIMELINE_PREFIX + userID, 0, -1);
 
         List<Tweet> tweet_list = new ArrayList<Tweet>();
         for (String tweet : tweet_IDs) {
@@ -65,20 +89,9 @@ public class DPDatabaseRedis implements DPDatabaseAPI {
                                     Timestamp.valueOf(jedis_connection.hget(TWEET_HASH_KEY + tweet_id, TWEET_TS_KEY)),
                                     jedis_connection.hget(TWEET_HASH_KEY + tweet_id, TWEET_TXT_KEY)
                                     ));
-            System.out.println(new Tweet(
-                tweet_id,
-                userID,
-                Timestamp.valueOf(jedis_connection.hget(TWEET_HASH_KEY + tweet_id, TWEET_TS_KEY)),
-                jedis_connection.hget(TWEET_HASH_KEY + tweet_id, TWEET_TXT_KEY)
-                ));
         }
-        return tweet_list;
-    }
-
-
-    @Override
-    public List<Tweet> getTweets(Integer userID) {
-        return new ArrayList<Tweet>();
+        System.out.println("Number of recent tweets: " + tweet_list.size());
+        return tweet_list;    
     }
 
     @Override
