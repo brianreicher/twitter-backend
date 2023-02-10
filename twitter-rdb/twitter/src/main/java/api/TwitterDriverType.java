@@ -13,7 +13,7 @@ public class TwitterDriverType{
      * An enum of different twitter API types that can be used in client programs.
      */
     public static enum DatabaseType {
-        MYSQL, REDIS
+        MYSQL, REDIS, REDISEC
     }
     TwitterDriverType(String flush){
         if(flush.equalsIgnoreCase("yes")){
@@ -50,6 +50,13 @@ public class TwitterDriverType{
                 }
                 return redis_api;
 
+            case REDISEC:
+                DPDatabaseRedisEC redis_ec_api = new DPDatabaseRedisEC();
+                if(flush){
+                    redis_ec_api.flushRedis();
+                }
+                return redis_ec_api;
+                
             default:
                 throw new IllegalArgumentException("Cannot constuct null twitter type");
         }

@@ -8,13 +8,7 @@ public class DPDatabaseRedisEC extends DPDatabaseRedis {
     public DPDatabaseRedisEC(){
         super();
     }
-    
 
-    public void flushRedis(){
-        jedis_connection.flushAll();
-        jedis_connection.set("latestTweetId", "0");
-
-    }
     @Override
     public void postTweet(Tweet t) {
         String latestTweet = jedis_connection.get(LATEST_TWEET_ID_KEY);

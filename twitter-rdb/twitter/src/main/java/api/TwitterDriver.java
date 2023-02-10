@@ -263,6 +263,36 @@ public class TwitterDriver {
 				// close database connection
 				redis_api.closeConnection();
 				break;
+
+			case "redis_ec":
+				System.out.println("Would you like to flush the database connection (yes/no)?");
+				String ec_flushed = api_scanner.next();
+				api_scanner.close();
+	
+				TwitterDriverType redis_ec_driver =  new TwitterDriverType(ec_flushed);
+				DPDatabaseAPI redis_ec_api = redis_ec_driver.createTwitterAPI(TwitterDriverType.DatabaseType.REDISEC);
+				
+				if(redis_ec_driver.flush){
+					// Post all follower/followee relationships
+					System.out.println("Posting all follower/followee relationships: ");
+					postAllFollowers(redis_ec_api);
+
+					// Post 1,000,000 tweets to the server and display metrics
+					System.out.println("Posting all tweets: ");
+					postAllTweets(redis_ec_api);
+				}
+				
+
+				// Fetch random user timelines of 10 tweets and display metrics
+				System.out.println("Fetching all user timelines randomly: ");
+				getHomeTimelines(redis_ec_api);
+		
+				// Fetch the timeline of a specific user_id
+				getHomeTimelines(redis_ec_api, 0);
+		
+				// close database connection
+				redis_ec_api.closeConnection();
+				break;
 		
 			default:
 				System.out.println("Not implemented");
