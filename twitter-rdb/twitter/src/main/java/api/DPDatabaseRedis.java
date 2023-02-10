@@ -43,7 +43,7 @@ public class DPDatabaseRedis implements DPDatabaseAPI {
 
         Set<Integer> followers = this.getFollowers(t.getUserID());
         System.out.println("Tweet followers" + followers.size());
-        
+
         for (Integer follower : followers) {
             this.jedis_connection.lpush(TIMELINE_PREFIX + follower, latestTweet);
         }
@@ -55,8 +55,7 @@ public class DPDatabaseRedis implements DPDatabaseAPI {
 
     @Override
     public List<Tweet> getTimeline(Integer userID) {
-        List<String> tweet_IDs = jedis_connection.lrange(TIMELINE_PREFIX + userID, 0, 10);
-        System.out.println("Number of tweet IDs: " + tweet_IDs.size());
+        List<String> tweet_IDs = jedis_connection.lrange(TIMELINE_PREFIX + userID, 0, 9);
 
         List<Tweet> tweet_list = new ArrayList<Tweet>();
         for (String tweet : tweet_IDs) {
@@ -69,7 +68,6 @@ public class DPDatabaseRedis implements DPDatabaseAPI {
                                     jedis_connection.hget(TWEET_HASH_KEY + tweet_id, TWEET_TXT_KEY)
                                     ));
         }
-        System.out.println("Timeline size: " + tweet_list.size());
         return tweet_list;
     }
 

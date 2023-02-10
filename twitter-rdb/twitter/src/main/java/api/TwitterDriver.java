@@ -209,51 +209,59 @@ public class TwitterDriver {
 		Scanner api_scanner = new Scanner(System.in);
 		System.out.println("Enter an API type to test (MySQL, Redis):");
 		String api_type = api_scanner.next();
-		api_scanner.close();
+
 		System.out.println("Utilizing " + api_type + " driver . . .");
 
 		switch (api_type.toLowerCase()) {
 			case "mysql":
-				
-				DPDatabaseAPI mysql_driver =  TwitterDriverType.createTwitterDriver(TwitterDriverType.DatabaseType.MYSQL, false);
-				
+				api_scanner.close();
+				TwitterDriverType mysql_driver =  new TwitterDriverType("false");
+				DPDatabaseAPI mysql_api = mysql_driver.createTwitterAPI(TwitterDriverType.DatabaseType.MYSQL);
+
 				// Post 1,000,000 tweets to the server and display metrics
-				postAllTweets(mysql_driver);
+				postAllTweets(mysql_api);
 
 				// Post all follower/followee relationships
-				postAllFollowers(mysql_driver);
+				postAllFollowers(mysql_api);
 
 				// Fetch random user timelines of 10 tweets and display metrics
-				getHomeTimelines(mysql_driver);
+				getHomeTimelines(mysql_api);
 		
 				// Fetch the timeline of a specif user_id
-				getHomeTimelines(mysql_driver, 0);
+				getHomeTimelines(mysql_api, 0);
 		
 				// close database connection
-				mysql_driver.closeConnection();
+				mysql_api.closeConnection();
 				break;
 
 			case "redis":
-				DPDatabaseAPI redis_driver =  TwitterDriverType.createTwitterDriver(TwitterDriverType.DatabaseType.REDIS, false);
-			
-				// Post all follower/followee relationships
-				System.out.println("Posting all follower/followee relationships: ");
-				postAllFollowers(redis_driver);
+				System.out.println("Would you like to flush the database connection (yes/no)?");
+				String flushed = api_scanner.next();
+				api_scanner.close();
+	
+				TwitterDriverType redis_driver =  new TwitterDriverType(flushed);
+				DPDatabaseAPI redis_api = redis_driver.createTwitterAPI(TwitterDriverType.DatabaseType.REDIS);
+				
+				if(redis_driver.flush){
+					// Post all follower/followee relationships
+					System.out.println("Posting all follower/followee relationships: ");
+					postAllFollowers(redis_api);
 
-				// Post 1,000,000 tweets to the server and display metrics
-				System.out.println("Posting all tweets: ");
-				postAllTweets(redis_driver);
+					// Post 1,000,000 tweets to the server and display metrics
+					System.out.println("Posting all tweets: ");
+					postAllTweets(redis_api);
+				}
+				
 
-		
-				// // Fetch random user timelines of 10 tweets and display metrics
+				// Fetch random user timelines of 10 tweets and display metrics
 				System.out.println("Fetching all user timelines randomly: ");
-				getHomeTimelines(redis_driver);
+				getHomeTimelines(redis_api);
 		
-				// // Fetch the timeline of a specif user_id
-				// getHomeTimelines(redis_driver, 0);
+				// Fetch the timeline of a specific user_id
+				getHomeTimelines(redis_api, 0);
 		
 				// close database connection
-				redis_driver.closeConnection();
+				redis_api.closeConnection();
 				break;
 		
 			default:

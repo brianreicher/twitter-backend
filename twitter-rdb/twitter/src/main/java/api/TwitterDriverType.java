@@ -6,11 +6,26 @@ package api;
  * and HWStrat1 implementations.
  */
 public class TwitterDriverType{
+
+    public boolean flush;
+
     /**
      * An enum of different twitter API types that can be used in client programs.
      */
     public static enum DatabaseType {
         MYSQL, REDIS
+    }
+    TwitterDriverType(String flush){
+        if(flush.equalsIgnoreCase("yes")){
+            this.flush = true;
+        }
+        else if(flush.equalsIgnoreCase("no")){
+            this.flush = false;
+        }
+        else{
+            this.flush = true;
+            System.out.println("Your database will be flushed. You entered an invalid command");
+        }
     }
 
     /**
@@ -18,7 +33,7 @@ public class TwitterDriverType{
      * @param tt - the twitter type you would like to construct.
      * @return an instance of a twitter API to use in client programs.
      */
-    public static DPDatabaseAPI createTwitterDriver(DatabaseType d_type, boolean flush) {
+    public DPDatabaseAPI createTwitterAPI(DatabaseType d_type) {
         switch (d_type) {
             case MYSQL: 
                 DPDatabaseMysql mysql_api = new DPDatabaseMysql();
