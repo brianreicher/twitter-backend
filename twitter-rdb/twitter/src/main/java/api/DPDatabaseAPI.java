@@ -53,6 +53,6 @@ public interface DPDatabaseAPI {
     public void closeConnection();
 
 
-    public void postFollow(User formatUserFromCSV);
+    public void postFollow(User user);
 
 }

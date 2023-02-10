@@ -240,10 +240,10 @@ public class TwitterDriver {
 				postAllTweets(redis_driver);
 		
 				// Post all follower/followee relationships
-				// postAllFollowers(redis_driver);
+				postAllFollowers(redis_driver);
 		
 				// // Fetch random user timelines of 10 tweets and display metrics
-				// getHomeTimelines(redis_driver);
+				getHomeTimelines(redis_driver);
 		
 				// // Fetch the timeline of a specif user_id
 				// getHomeTimelines(redis_driver, 0);
