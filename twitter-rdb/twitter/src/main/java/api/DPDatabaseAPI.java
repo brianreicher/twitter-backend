@@ -3,6 +3,9 @@ package api;
 import java.util.List;
 import java.util.Set;
 
+import api.types.Tweet;
+import api.types.User;
+
 
 public interface DPDatabaseAPI {
 

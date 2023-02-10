@@ -1,6 +1,8 @@
-package api;
+package api.utils;
 
 import java.util.Comparator;
+
+import api.types.Tweet;
 
 
 public class TweetComparator implements Comparator<Tweet> {

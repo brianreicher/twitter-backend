@@ -1,5 +1,9 @@
-package api;
+package api.utils;
 
+import api.DPDatabaseAPI;
+import api.mysql.DPDatabaseMysql;
+import api.redis.DPDatabaseRedis;
+import api.redis.DPDatabaseRedisEC;
 
 /**
  * Factory class to create instances of twitter APIs to use in the client programs. Currently supports RDB, HW2Strat2,
@@ -15,7 +19,7 @@ public class TwitterDriverType{
     public static enum DatabaseType {
         MYSQL, REDIS, REDISEC
     }
-    TwitterDriverType(String flush){
+    public TwitterDriverType(String flush){
         if(flush.equalsIgnoreCase("yes")){
             this.flush = true;
         }
@@ -56,7 +60,7 @@ public class TwitterDriverType{
                     redis_ec_api.flushRedis();
                 }
                 return redis_ec_api;
-                
+
             default:
                 throw new IllegalArgumentException("Cannot constuct null twitter type");
         }

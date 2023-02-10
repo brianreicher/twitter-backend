@@ -1,8 +1,11 @@
-package api;
+package api.mysql;
 
 import java.sql.*;
 import java.util.*;
 
+import api.DPDatabaseAPI;
+import api.types.Tweet;
+import api.types.User;
 import database.DBUtils;
 
 

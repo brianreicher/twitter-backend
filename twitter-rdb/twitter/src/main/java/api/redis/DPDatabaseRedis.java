@@ -1,8 +1,11 @@
-package api;
+package api.redis;
 
 import java.sql.Timestamp;
 import java.util.*;
 
+import api.DPDatabaseAPI;
+import api.types.Tweet;
+import api.types.User;
 import redis.clients.jedis.*;
 import database.DBUtils;
 

@@ -1,4 +1,4 @@
-package api;
+package api.types;
 
 
 public class User {

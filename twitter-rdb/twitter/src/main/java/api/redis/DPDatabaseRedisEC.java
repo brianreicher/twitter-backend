@@ -1,6 +1,9 @@
-package api;
+package api.redis;
 
 import java.util.*;
+
+import api.types.Tweet;
+import api.utils.TweetComparator;
 
 
 public class DPDatabaseRedisEC extends DPDatabaseRedis {

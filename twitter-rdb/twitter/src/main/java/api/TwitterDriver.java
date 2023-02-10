@@ -7,6 +7,10 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.*;
 
+import api.types.Tweet;
+import api.types.User;
+import api.utils.TwitterDriverType;
+
 
 /**
  * This program exercises the DPDatabaseAPI (MySQL implementation).
