@@ -12,16 +12,16 @@ public class DPDatabaseRedis implements DPDatabaseAPI {
 
     // For demonstration purposes. Better would be a constructor that takes a file path
     // and loads parameters dynamically.
-    private final Jedis jedis_connection = new DBUtils().j;
-    private final String LATEST_TWEET_ID_KEY = "latestTweetId";
-    private final String FOLLOWERS_PREFIX = "followers:";
-    private final String FOLLOWS_PREFIX = "follows:";
-    private final String TIMELINE_PREFIX = "timeline:";
-    private final String TWEETS_PREFIX = "tweets:";
-    private final String USERS_SET = "users";
-    private final String TWEET_HASH_KEY = "tweet:";
-    private final String TWEET_TXT_KEY = "tweetText";
-    private final String TWEET_TS_KEY = "tweetTimeStamp";
+    public final Jedis jedis_connection = new DBUtils().j;
+    public final String LATEST_TWEET_ID_KEY = "latestTweetId";
+    public final String FOLLOWERS_PREFIX = "followers:";
+    public final String FOLLOWS_PREFIX = "follows:";
+    public final String TIMELINE_PREFIX = "timeline:";
+    public final String TWEETS_PREFIX = "tweets:";
+    public final String USERS_SET = "users";
+    public final String TWEET_HASH_KEY = "tweet:";
+    public final String TWEET_TXT_KEY = "tweetText";
+    public final String TWEET_TS_KEY = "tweetTimeStamp";
     
     @Override
     public void closeConnection() {
@@ -42,7 +42,6 @@ public class DPDatabaseRedis implements DPDatabaseAPI {
         this.jedis_connection.hset(TWEET_HASH_KEY + latestTweet, TWEET_TXT_KEY, t.getTweetText());
 
         Set<Integer> followers = this.getFollowers(t.getUserID());
-        System.out.println("Tweet followers" + followers.size());
 
         for (Integer follower : followers) {
             this.jedis_connection.lpush(TIMELINE_PREFIX + follower, latestTweet);
