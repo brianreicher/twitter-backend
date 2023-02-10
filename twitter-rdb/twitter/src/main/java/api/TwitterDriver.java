@@ -13,16 +13,14 @@ import api.utils.TwitterDriverType;
 
 
 /**
- * This program exercises the DPDatabaseAPI (MySQL implementation).
- * Notice that nothing other than the instantiation of the API shows us that
- * the underlying database is Relational, or MySQL.
-
+ * This program exercises the DPDatabaseAPI (MySQL, Redis implementation).
  */
 public class TwitterDriver {
 
 	/**
 	 * Driver method to get a specific user's timeline information. 
 	 * Implemented here with a MySQL API call and easily interchangeable with Redis.
+	 * @param api The API type to utilize
 	 * @param user_id The specified user_id
 	 */
 	public static void getHomeTimelines(DPDatabaseAPI api, Integer user_id){
@@ -55,6 +53,7 @@ public class TwitterDriver {
 	/**
 	 * Driver method to fetch as many user' timeline information as possible in 60 seconds. 
 	 * Implemented here with a MySQL API call and easily interchangeable with Redis.
+	 *  @param api The API type to utilize
 	 */
 	public static void getHomeTimelines(DPDatabaseAPI api){
 		// get list of all potential users to pick from
@@ -92,6 +91,7 @@ public class TwitterDriver {
 	/**
 	 * Driver method to post all tweets to the database. 
 	 * Implemented here with a MySQL API call and easily interchangeable with Redis.
+	 * @param api The API type to utilize
 	 */
 	public static void postAllTweets(DPDatabaseAPI api){
 		// initialize the timer
@@ -112,7 +112,7 @@ public class TwitterDriver {
 				api.postTweet(formatTweetFromCSV(csv_line, total_tweets_posted));
 				// increment the total post counter
 				total_tweets_posted++;
-			}
+			} // error handling
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -132,6 +132,7 @@ public class TwitterDriver {
 
 	/**
 	 * Helper method to populate the follows table of the database.
+	 * @param api The API type to utilize
 	 */
 	public static void postAllFollowers(DPDatabaseAPI api){
 		// Read the csv
@@ -144,11 +145,13 @@ public class TwitterDriver {
 			while((csv_line = buff.readLine()) != null) {
 				api.postFollow(formatUserFromCSV(csv_line));
 			}
+			// error handling
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		// success statement
 		System.out.println("Added all followers to the database");
 	}
 
@@ -182,6 +185,7 @@ public class TwitterDriver {
 	/**
 	 * Helper method to format 'tweet.csv' entries to Tweet objects for posting.
 	 * @param tweetline The line of the CSV file.
+	 * @param tweet_id The id of the tweet, index from the postAllTweets() method.
 	 * @return The newly created Tweet object from the CSV data.
 	 */
 	public static Tweet formatTweetFromCSV(String tweetline, int tweet_id){
@@ -210,16 +214,23 @@ public class TwitterDriver {
 
     public static void main(String[] args) throws Exception {
 		
+		// scanner for user input regarding API implementation to test
 		Scanner api_scanner = new Scanner(System.in);
 		System.out.println("Enter an API type to test (MySQL, Redis):");
 		String api_type = api_scanner.next();
 
 		System.out.println("Utilizing " + api_type + " driver . . .");
 
+		// switch statement for each API type case
 		switch (api_type.toLowerCase()) {
 			case "mysql":
+				// MySQL case
 				api_scanner.close();
+
+				// initiate a MySQL driver, not needing to flush
 				TwitterDriverType mysql_driver =  new TwitterDriverType("false");
+
+				// create the instance of the MySQL API from using the createTwitterAPI method
 				DPDatabaseAPI mysql_api = mysql_driver.createTwitterAPI(TwitterDriverType.DatabaseType.MYSQL);
 
 				// Post 1,000,000 tweets to the server and display metrics
@@ -239,13 +250,20 @@ public class TwitterDriver {
 				break;
 
 			case "redis":
+				// base redis implementation
+
+				// check if the user wishes to flush any existing data and re-post the tweets/follwers
 				System.out.println("Would you like to flush the database connection (yes/no)?");
 				String flushed = api_scanner.next();
 				api_scanner.close();
-	
+
+				// initiate a Redis driver, using the user-inputted preference for flushing
 				TwitterDriverType redis_driver =  new TwitterDriverType(flushed);
+
+				// create the instance of the Redis API from using the createTwitterAPI method
 				DPDatabaseAPI redis_api = redis_driver.createTwitterAPI(TwitterDriverType.DatabaseType.REDIS);
 				
+				// if flushed, post all tweets/follwers
 				if(redis_driver.flush){
 					// Post all follower/followee relationships
 					System.out.println("Posting all follower/followee relationships: ");
@@ -269,13 +287,20 @@ public class TwitterDriver {
 				break;
 
 			case "redis_ec":
+				// extra credit redis implementation
+
+				// check if the user wishes to flush any existing data and re-post the tweets/follwers
 				System.out.println("Would you like to flush the database connection (yes/no)?");
 				String ec_flushed = api_scanner.next();
 				api_scanner.close();
 	
+				// initiate a Redis_EC driver, using the user-inputted preference for flushing
 				TwitterDriverType redis_ec_driver =  new TwitterDriverType(ec_flushed);
+
+				// create the instance of the Redis_EC API from using the createTwitterAPI method
 				DPDatabaseAPI redis_ec_api = redis_ec_driver.createTwitterAPI(TwitterDriverType.DatabaseType.REDISEC);
 				
+				// if flushed, post all tweets/follwers
 				if(redis_ec_driver.flush){
 					// Post all follower/followee relationships
 					System.out.println("Posting all follower/followee relationships: ");

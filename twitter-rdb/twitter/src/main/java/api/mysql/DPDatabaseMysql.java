@@ -29,8 +29,12 @@ public class DPDatabaseMysql implements DPDatabaseAPI {
     public void closeConnection() { dbu.closeConnection(); }
 
 
+    /* 
+     * 
+     */
     @Override
     public void postTweet(Tweet t) {
+        
         // SQL statment
         String sql = "INSERT INTO tweets (user_id, tweet_text) VALUES" +
                 "('"+t.getUserID()+"','"+t.getTweetText()+"')";
