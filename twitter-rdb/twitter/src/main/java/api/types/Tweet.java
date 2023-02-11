@@ -2,16 +2,20 @@ package api.types;
 
 import java.sql.*;
 
+
+/*
+ * Type Class for a Tweet object
+ */
 public class Tweet {
 
-    private int tweet_ID;
-    private int user_ID;
-    private Timestamp tweet_ts;
-    private String tweet_text;
+    private int tweet_ID; // unique identifier for each tweet
+    private int user_ID; // id of the poster of the tweet
+    private Timestamp tweet_ts; // timestamp of the tweet
+    private String tweet_text; // text of the tweet
 
 
     public Tweet(int user_ID, Timestamp tweet_ts, String tweet_text) {
-        this.tweet_ID = -1;
+        this.tweet_ID = -1; // set id to -1 if not specified
         this.user_ID = user_ID;
         this.tweet_ts = tweet_ts;
         this.tweet_text = tweet_text;

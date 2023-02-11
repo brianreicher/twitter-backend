@@ -6,11 +6,13 @@ import redis.clients.jedis.Jedis;
 
 public class DBUtils {
 
-
+    // mysql connection
     private String url;
     private String user;
     private String password;
     private Connection con = null;
+    
+    // redis connection
     public final Jedis j;
 
     public DBUtils(String url, String user, String password) {
@@ -18,14 +20,17 @@ public class DBUtils {
         this.user = user;
         this.password = password;
         this.con = getConnection();
-        this.j = null;
+        this.j = null; // set jedis connnection to null if passing MySQL connection information
     }
 
     public DBUtils(){
-        this.j = new Jedis();
+        this.j = new Jedis(); // set jedis connection if nothing is passed
     }
 
-
+    /**
+     * Get MySQL connection string
+     * @return MySQL Connection
+     */
     public Connection getConnection()
     {
         if (con == null) {
@@ -41,6 +46,9 @@ public class DBUtils {
         return con;
     }
 
+    /**
+     * Close a MySQL connection
+     */
     public void closeConnection() {
         try {
             con.close();
@@ -50,6 +58,11 @@ public class DBUtils {
         }
     }
 
+    /**
+     * Insert one record into the database
+     * @param insertSQL the SQL statement to execute
+     * @return The index key
+     */
     public int insertOneRecord(String insertSQL)
     {
         // System.out.println("INSERT STATEMENT: "+insertSQL);

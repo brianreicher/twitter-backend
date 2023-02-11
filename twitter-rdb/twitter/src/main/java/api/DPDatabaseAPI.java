@@ -7,12 +7,14 @@ import api.types.Tweet;
 import api.types.User;
 
 
+/*
+ * Base interface for the DPDatabaseAPI
+ */
 public interface DPDatabaseAPI {
 
     /**
      * Post one tweet
      * @param t The tweet
-     * @return
      */
     public void postTweet(Tweet t);
 
@@ -48,6 +50,10 @@ public interface DPDatabaseAPI {
      */
     public List<Tweet> getTweets(Integer userID);
 
+    /**
+     * Fetch all users in the database
+     * @return A list of all of the users
+     */
     public List<Integer> getAllUsers();
         
 
@@ -56,7 +62,10 @@ public interface DPDatabaseAPI {
      */
     public void closeConnection();
 
-
+    /**
+     * Post a follower/followee from a CSV stream
+     * @param userId The user's unique identifiers
+     */
     public void postFollow(User user);
 
 }

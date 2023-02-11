@@ -1,10 +1,12 @@
 package api.types;
 
-
+/*
+ * Type Class for a User object 
+ */
 public class User {
 
-    private int user_ID;
-    private int follows_id;
+    private int user_ID; // unique user identifier
+    private int follows_id; // id of a user that the user follows
 
 
     public User(int user_ID, int follows_id) {
